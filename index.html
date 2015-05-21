@@ -1,0 +1,405 @@
+<html>
+<head>
+
+<style>
+
+
+*
+{
+
+margin:0px;
+padding:0px;
+
+/*font-family: "ARS Maquette", sans-serif;	*/
+font-family: 'Raleway', sans-serif;
+
+}
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Raleway"), url("./css/Raleway.woff") format("woff");
+}
+
+
+html , body {
+
+width:100%;
+height:100%;
+background-color:white;
+}
+
+#top
+{
+
+width:100%;
+height:50px;
+background-color:#efefef;
+text-align:center;
+line-height:50px;
+font-size:18px;
+}
+
+
+.feed_img {
+
+float:left;
+background-color:#dedede;
+/*width:75px;
+height:75px;*/
+width:84px;
+height:84px;
+border-radius:5px;
+border:none;
+margin-right:10px;
+}
+
+.list
+{
+margin-left:10px;
+margin-top:15px;
+float:left;
+}
+
+.list > span
+{
+line-height:20px;
+font-weight:normal;
+font-size:14px;
+padding-right:5px;
+}
+
+.clearfix
+{
+
+width:100%;
+height:20px;
+
+}
+
+.feed_favicon
+{
+width:24px;
+height:24px;
+float:left;
+margin-right:5px;
+border-radius:5px;
+}
+
+.menu_item
+{
+width:100%;
+height:24px;
+margin-left:10px;
+margin-top:10px;
+}
+
+.menu_item > span
+{
+
+
+line-height:24px;
+}
+
+.slideout-menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 0;
+  width: 256px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: none;
+}
+
+.slideout-panel {
+  position: relative;
+  z-index: 1;
+}
+
+.slideout-open,
+.slideout-open body,
+.slideout-open .slideout-panel {
+  overflow: hidden;
+}
+
+.slideout-open .slideout-menu {
+  display: block;
+}
+
+#top_title
+{
+
+
+color:#838383;
+}
+
+
+
+#lists
+{
+
+height:90%;
+overflow-x:hidden;
+float:left;
+
+}
+
+#search
+{
+
+
+border:none;
+
+line-height:25px;
+
+border:1px solid #dedede;
+position:absolute;
+bottom:2px;
+left:5px;
+/*height:20px;*/
+}
+
+#bottom {
+
+text-align:center;
+
+}
+</style>
+
+
+
+</head>
+
+
+<body>
+
+
+<nav id="menu">
+<div id="lists">
+<div id="clearfix"></div>
+<div id="clearfix"></div>
+<div class="menu_item"><img class="feed_favicon" src="./images/pebble.png" /> <span>Pebble Times</span></div>
+
+
+<div class="menu_item"><img class="feed_favicon" src="./images/pebble.png" /> <span>The Next Web</span></div>
+
+
+
+<div class="menu_item"><img class="feed_favicon" src="./images/pebble.png" /> <span>Engadget</span></div>
+
+
+
+<div class="menu_item"><img class="feed_favicon" src="./images/pebble.png" /> <span>The Verge - All Post</span></div>
+
+</div>
+
+<div id="bottom">
+<input type="text" placeholder="search feed or add url" id="search">
+</div>
+</nav>
+<div id="main">
+<header id="top">
+
+<span id="top_title">Mashable Tech</span>
+</header>
+
+
+
+
+<!--div class="list">
+
+<img src="" class="feed_img" />
+
+<span class="feed_title"></span>
+</div -->
+
+
+
+
+
+</div>
+
+<div class="clearfix"></div>
+
+<script type="text/javascript">
+ /* WebFontConfig = {
+    google: { families: [ 'Raleway::latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();*/ </script>
+
+
+<script src="js/slideout.min.js"></script>
+<script src="js/transparency.min.js"></script>
+
+<script>
+  var slideout = new Slideout({
+    'panel': document.getElementById('main'),
+    'menu': document.getElementById('menu'),
+    'padding': 246,
+    'tolerance': 70,
+    'duration': 200
+  });
+</script>
+
+
+<script src="./js/crypt.js"></script>
+<script src="./js/nanoajax.min.js"></script>
+
+<script>
+
+
+
+
+
+
+function parse_img(html_str)
+{
+
+reg = /\ssrc=(?:(?:'([^']*)')|(?:"([^"]*)")|([^\s]*))/ ;
+
+return reg.exec(html_str);
+
+
+}
+
+function fetech_feed(url) {
+
+var feeds = {};
+
+nanoajax.ajax(url,function(stat,code){
+console.log(code = JSON.parse(code));
+if(stat==200)
+{
+var time = new Date;
+if(localStorage.feeds) {
+
+
+feeds = JSON.parse(localStorage.feeds);
+
+
+} 
+
+var tit=code.responseData.feed.title;
+
+console.log(tit);
+
+feeds[tit] = {
+	entries: code.responseData.feed.entries,
+ 	updated_time:time.getTime()
+
+}
+
+localStorage.feeds = JSON.stringify(feeds);
+
+}
+
+
+
+
+});
+
+
+
+}
+
+
+
+function populate_feed(feed_name) {
+var feed_name = (feed_name);
+var html= '<header id="top"><span id="top_title">'+feed_name+'</span></header>';
+var data = (JSON.parse(localStorage.feeds));
+
+data = (data[feed_name]);
+
+ var list = {feed_title: [], feed_img: []};
+
+
+ var tmp;
+  
+ var temp;
+var count = data.entries.length
+  
+  for(var i=0;i<count;i++) {
+
+html+='<div class="list">';
+
+
+  temp = parse_img(data.entries[i].content);
+
+  if(temp) {
+
+	//tmp = {src: temp[0]}
+
+  list.feed_img.push(temp[0])
+
+ }
+
+if(temp)
+{temp[0] = (temp[0]).replace('"','');
+temp[0] = (temp[0]).replace('"','');
+temp[0] = (temp[0]).replace('src=','');
+}
+else
+{
+temp ="";
+
+}
+//console.log( temp[0].replace('src='));
+
+html+='<img class="feed_img" src="'+ temp[0] +'">';
+
+html+='<span class="feed_title">'+data.entries[i].title+'</span></div>';
+
+
+ }
+  
+ console.log(list);
+
+// Transparency.render(document.getElementById('main'), list);
+
+
+document.getElementById('main').innerHTML=html;
+  
+
+return list;
+}
+
+function populate_subscription() {
+var html = '';
+var feeds = JSON.parse(localStorage.feeds);
+
+for(feed_name in feeds)
+{
+
+if(feeds[feed_name])
+{
+
+html+='<div class="menu_item" onclick="populate_feed(this.textContent.trim())"><img class="feed_favicon" src="./images/pebble.png"/> <span>'+feed_name+'</span></div>';
+
+}
+
+}
+
+document.getElementById('lists').innerHTML=html;
+
+
+}
+
+
+
+</script>
+
+</body>
+
+</html>
