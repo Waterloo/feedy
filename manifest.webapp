@@ -1,0 +1,21 @@
+{
+  "version": "1",
+  "name": "Feedy",
+  "launch_path": "/index.html",
+  "description": "A Light Weight Feed Reader for FirefoxOs",
+  "icons": {
+    "16": "/images/logo16.png"
+     },
+  "developer": {
+    "name": "Jithin Shah",
+    "url": "http://github.com/waterloo/feedy"
+  },
+  "installs_allowed_from": [
+    "*"
+  ],
+  "default_locale": "en",
+  "permissions": {
+ 
+      "tcp-socket": {}
+  }
+}
