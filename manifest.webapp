@@ -1,7 +1,7 @@
 {
   "version": "1",
   "name": "Feedy",
-  "launch_path": "/index.html",
+  "launch_path": "/category_view.html#/cat/Tech",
   "description": "A Light Weight Feed Reader for FirefoxOs",
   "icons": {
     "16": "/images/logo16.png"
@@ -16,6 +16,14 @@
   "default_locale": "en",
   "permissions": {
  
-      "tcp-socket": {}
-  }
+    "alarms": {
+      "description": "Required to schedule alarms"
+    }  
+  },
+    
+     "messages": [
+       
+    { "alarm": "/index.html" }
+  
+     ]
 }

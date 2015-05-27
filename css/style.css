@@ -115,7 +115,7 @@ height:75px;*/
         }
         
         #lists {
-            height: 90%;
+            height: 85%;
             overflow-x: hidden;
             float: left;
         }
@@ -124,14 +124,16 @@ height:75px;*/
             border: none;
             line-height: 25px;
             border: 1px solid #dedede;
-            position: absolute;
-            bottom: 2px;
-            left: 5px;
             margin: auto;
         }
         
         #bottom {
             text-align: center;
+             position: absolute;
+            bottom: 2px;
+            left: 5px;
+            width:100%;
+            overflow-x: hidden;
         }
  
 .cat_list {
@@ -151,9 +153,6 @@ height:75px;*/
     height:75px;
 }
 
-div {
-    
-}
 
 #category_head {
     width: 100%;
@@ -172,12 +171,13 @@ div {
     text-shadow: 1px 2px 2px #0000;
 }
 
-#sub_list {
+.sub_list {
     width: 100%;
      height: 80px;
     box-shadow: 1px 1px 1px #ededed;
     overflow: hidden;
     padding-bottom: 10px;
+    
 }
 
 .sub_list_img {
@@ -194,7 +194,8 @@ div {
 
 .sub_title {
     float: left;
-    font-size: 18px;
+    font-size: 15px;
+    margin-left: 10px;
 }
 
 .sub_list_head {
@@ -208,16 +209,26 @@ div {
     
     padding: 0px 10px;
     padding-top: 10px;
+    margin-top: 20px;
+}
+
+.followed {
+    transition: background-color 0.5s ease;
+    background-color: #2587F6 !important;
 }
 
 .button {
-    width:50px;
+    width:70px;
+    transition: background-color 0.5s ease;
     background-color: #29db29;
     color: white;
     height: 25px;
     border: none;
+    box-shadow: none;
     float: right;
-    margin-right: 5px;
+    margin-right: 10px;
+    text-align: center;
+    line-height: 25px;
 }
 
 .button:active
@@ -227,6 +238,15 @@ div {
 }
 
 .sub_desc {
-    font-size: 13px;
-    text-overflow: ellipsis;
+font-size: 13px;
+text-overflow: ellipsis;
+padding: 20px 14px 5px;
+margin-top: 20px;
+}
+
+.nav_btn {
+   background-color: rgb(251, 251, 251);
+height: 30px;
+line-height: 30px;
+margin-bottom: 2px;    
 }
