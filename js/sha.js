@@ -13,7 +13,7 @@
 //document.addEventListener('load',router);
 
 
-
+var global_feeds = JSON.parse(localStorage.feeds);
 
 
 // Listineng for Hash Change
@@ -29,23 +29,42 @@ function router() {
 
     switch (route[1]) {
 
-    //if cat populate category page , category name is in 3rd position    
+        //if cat populate category page , category name is in 3rd position    
     case 'cat':
         pop_follow_list(route[2]);
         break;
 
-    //if sync the Alarm Fired For Syncing
+        //if sync the Alarm Fired For Syncing
     case 'sync':
         update_all();
+        break;
+
+    case 'content':
+        display_article(route[2] ,route[3]);
         break;
 
     }
 }
 
 
+
+function populate_subscription() {
+    var html = '';
+    var feeds = JSON.parse(localStorage.feeds);
+    for (feed_name in feeds) {
+        if (feeds[feed_name]) {
+            html += '<div class="menu_item" onclick="populate_feed(this.textContent.trim())"><img class="feed_favicon" src="' + feeds[feed_name]['icon'] + '" /> <span>' + feed_name + '</span></div>';
+        }
+    }
+    document.getElementById('lists').innerHTML = html;
+}
+
+
+
+
 //This Function Returns the Source inside the first src attribut it finds even if it is not an Image , Needs Fixing
 function parse_img(html_str) {
-    
+
     reg = /\ssrc=(?:(?:'([^']*)')|(?:"([^"]*)")|([^\s]*))/;
     return reg.exec(html_str);
 
@@ -54,44 +73,46 @@ function parse_img(html_str) {
 
 
 /*function to fetech remote feed url , Takes feed url and a callback or a feed_name , if feed_name is given then it will call force_populate_feed with feed name as parameter
-*/
+ */
 
 function fetech_feed(url, feed_name) {
 
     var feeds = {};
     //Api URL
-    
+
     fetch_url = 'http://localhost:8080/feedy/?url=' + encodeURIComponent(url);
-    
+
     console.log(fetch_url);
-    
+
     nanoajax.ajax(fetch_url, function (stat, code) {
-        
-    //if the ajax request was success    
+
+        //if the ajax request was success    
         if (stat == 200) {
-            
+
             console.log(code);
             console.log(stat);
             //            console.log(JSON.parse(code));
             code = JSON.parse(code);
-            
+
             //checking weather the subscription exists , if it is there parse it to Object
             if (localStorage.feeds) {
                 feeds = JSON.parse(localStorage.feeds);
             }
-            
+
             var tit = code.responseData.feed.title;
             //Coverting The Expire Time To Javascript Object
             var time = new Date(code.expire);
             console.log(tit);
             feeds[tit]['entries'] = code.responseData.feed.entries;
-         
+
             feeds[tit]['updated_time'] = time.getTime();
             feeds[tit]['feed_url'] = url;
-         
+
             //writing back data
             localStorage.feeds = JSON.stringify(feeds);
-            
+
+            global_feeds = feeds;
+
             //if there is a callback then call it else call force populate feed
             if (typeof (feed_name) == 'string') {
                 force_populate_feed(feed_name);
@@ -111,19 +132,19 @@ function fetech_feed(url, feed_name) {
 
 //function to  populate feed or fetech and populate feed
 function populate_feed(feed_name) {
-    
+
     var feed_name = (feed_name);
     var html = '<header id="top"><span id="top_title">' + feed_name + '</span></header>';
-    
+
     document.getElementById('main').innerHTML = html;
-    
+
     var data = (JSON.parse(localStorage.feeds));
     data = (data[feed_name]);
     var cur_time = new Date;
-    
+
     //if feed is not fresh or dosn't fetech at all then fetech feed  else populate feed
-    if (((cur_time > data.updated_time) / 900000) > 1 || data.updated_time == 0) {
-        
+    if (((cur_time > data.updated_time) ) || data.updated_time == 0) {
+
         var html = '<header id="top"><span id="top_title">Checking for new Articles...</span></header>';
         document.getElementById('main').innerHTML = html;
         fetech_feed(data.feed_url, feed_name);
@@ -154,7 +175,12 @@ function force_populate_feed(feed_name) {
     var count = data.entries.length
     for (var i = 0; i < count; i++) {
         elm = document.createElement('div');
+        elm.setAttribute('data-source', feed_name);
+        elm.setAttribute('data-entry', i);
         elm.setAttribute('class', 'list');
+
+        elm.addEventListener('click', propogate_content);
+
         temp = parse_img(data.entries[i].content);
         if (temp) {
             list.feed_img.push(temp[0])
@@ -175,6 +201,7 @@ function force_populate_feed(feed_name) {
         });
         var feed_title = document.createElement('span');
         feed_title.setAttribute('class', 'feed_title');
+
         feed_title.textContent = data.entries[i].title;
         //                html += '<img class="feed_img"  src="' + temp[0] + '">';
         //
@@ -216,6 +243,14 @@ function pop_follow_list(path) {
     }
     var hash = path;
     var follow_feeds = collection[hash].feeds;
+
+
+
+    document.getElementById('category_head').style.backgroundImage = 'url(\'' + collection[hash].img + '\')';
+    document.getElementById('top_title').textContent = hash;
+
+
+
     for (follow in follow_feeds) {
         var sub_list = document.createElement('div');
         sub_list.setAttribute('class', 'sub_list');
@@ -248,8 +283,6 @@ function pop_follow_list(path) {
         sub_list.appendChild(sub_desc);
         document.getElementById('sub_lists').appendChild(sub_list);
     }
-    document.getElementById('category_head').style.backgroundImage = 'url(\'' + collection[hash].img + '\')';
-    document.getElementById('category_title').textContent = hash;
     var buttons = document.getElementsByClassName('button');
     var btn_len = buttons.length
     for (var i = 0; i < btn_len; i++) {
@@ -274,6 +307,9 @@ function pop_follow_list(path) {
                 updated_time: 0,
                 icon: collection[hash]['feeds'][feed_name].icon
             };
+
+            fetech_feed(feeds[feed_name].feed_url);
+
         } else if (e.target.dataset.state == 'followed') {
             e.target.dataset.state = 'follow';
             e.target.className = '';
@@ -282,18 +318,10 @@ function pop_follow_list(path) {
             delete feeds[feed_name];
         }
         localStorage.feeds = JSON.stringify(feeds);
-    }
-}
+        populate_subscription();
 
-function populate_subscription() {
-    var html = '';
-    var feeds = JSON.parse(localStorage.feeds);
-    for (feed_name in feeds) {
-        if (feeds[feed_name]) {
-            html += '<div class="menu_item" onclick="populate_feed(this.textContent.trim())"><img class="feed_favicon" src="' + feeds[feed_name]['icon'] + '" /> <span>' + feed_name + '</span></div>';
-        }
     }
-    document.getElementById('lists').innerHTML = html;
+
 }
 
 
@@ -360,6 +388,12 @@ function rec() {
     if (window.toFetch.length > 0) {
         fetech_feed((window.toFetch.pop()).url, rec);
 
+    } else {
+
+        //When All The Feeds are feteched Reshedule fetching for next 15 mins
+
+        shedule_sync();
+
     }
 
 
@@ -367,3 +401,237 @@ function rec() {
 
 
 
+function populate_home() {
+    var articles = [];
+
+    if (localStorage.feeds) {
+
+        var data = JSON.parse(localStorage.feeds);
+
+        for (x in data) {
+            //collecting articles from each feeds
+            articles = articles.concat(data[x].entries);
+
+
+
+        }
+
+
+        //sorting article by Published Date
+        articles.sort(function (a, b) {
+            a = new Date(a.publishedDate);
+            b = new Date(b.publishedDate);
+            return a > b ? -1 : a < b ? 1 : 0;
+        });
+
+    }
+
+    //Rendering Articles
+
+    var html = '<header id="top"><span id="top_title">Home</span></header>';
+    document.getElementById('main').innerHTML = html;
+    var data = {
+        entries: articles
+    }
+
+    var list = {
+        feed_title: [],
+        feed_img: []
+    };
+
+
+    var count = data.entries.length;
+    for (var i = 0; i < count; i++) {
+
+        console.log(data.entries[i].publishedDate);
+
+        elm = document.createElement('div');
+        elm.setAttribute('class', 'list');
+        temp = parse_img(data.entries[i].content);
+        if (temp) {
+            list.feed_img.push(temp[0])
+        }
+        if (temp) {
+            temp[0] = (temp[0]).replace('"', '');
+            temp[0] = (temp[0]).replace('"', '');
+            temp[0] = (temp[0]).replace('src=', '');
+        } else {
+            temp = '';
+        }
+        //console.log( temp[0].replace('src='));
+
+        var img = document.createElement('img');
+        setAttributes(img, {
+            'src': temp[0],
+            'class': 'feed_img'
+        });
+        var feed_title = document.createElement('span');
+        feed_title.setAttribute('class', 'feed_title');
+        feed_title.textContent = data.entries[i].title;
+        //                html += '<img class="feed_img"  src="' + temp[0] + '">';
+        //
+        //                html += '<span class="feed_title">' + data.entries[i].title + '</span></div>';
+        elm.appendChild(img);
+        elm.appendChild(feed_title);
+        document.getElementById('main').appendChild(elm);
+    }
+
+}
+
+
+
+function shedule_sync(milli_sec) {
+
+    if (navigator.mozAlarms) {
+
+        var id = null;
+
+        if (!milli_sec) {
+
+            milli_sec = 900000;
+
+        }
+
+        var request = navigator.mozAlarms.getAll();
+
+        request.onsuccess = function () {
+            if (request.result.length == 0) {
+
+
+                // This the date to schedule the alarm , Default 15 minute in milli second
+                var myDate = new Date(new Date().getTime() + milli_sec);
+
+                // This is arbitrary data pass to the alarm
+                var data = {
+                    ping: "pong"
+                }
+
+                // The "ignoreTimezone" string is what make the alarm ignoring it
+                var new_request = navigator.mozAlarms.add(myDate, "ignoreTimezone", data);
+
+                new_request.onsuccess = function () {
+                    console.log("The alarm has been scheduled");
+                };
+
+                new_request.onerror = function () {
+                    console.log("Error");
+                };
+            }
+        }
+
+        request.onerror = function () {
+            console.log("Error getting Alarms");
+
+        }
+
+    }
+
+}
+
+
+
+
+//Initilazing Section
+
+//Initilazing of Canvas Menu
+
+
+var slideout = new Slideout({
+    'panel': document.getElementById('main'),
+    'menu': document.getElementById('menu'),
+    'padding': 246,
+    'tolerance': 70,
+    'duration': 200
+});
+
+populate_subscription();
+
+var home_btn = document.getElementById('take_me_home');
+home_btn.addEventListener('click', populate_home);
+(document.getElementById("top")).addEventListener('click', function () {
+    slideout.toggle()
+});
+
+if (navigator.mozSetMessageHandler) {
+
+    navigator.mozSetMessageHandler("alarm", function (mozAlarm) {
+
+        update_all();
+
+        nanoajax.ajax('http://localhost:8080/feedy/t.php');
+
+    });
+
+}
+
+function propogate_content(e) {
+    var elm = e.target;
+
+    if (elm.className != 'list') {
+        elm = elm.parentElement;
+    }
+    
+    location.hash = '';
+    location.hash = '#/content/' + elm.dataset.source + '/' + elm.dataset.entry;
+}
+
+
+function display_article(source, entry) {
+
+    var article = global_feeds[source].entries[entry];
+    var article_title = article.title;
+    var article_content = article.content;
+    
+     var feed_name = (source);
+    var html = '<header id="top"><span id="top_title">' + feed_name + '</span></header>';
+    document.getElementById('main').innerHTML = html;
+    
+    var article_elm = document.createElement('div');
+    article_elm.setAttribute('id','article');
+    
+    var article_title_elm = document.createElement('h3');
+    article_title_elm.setAttribute('id','content_title');
+    article_title_elm.textContent = article_title;
+    
+    
+    var article_content_elm = document.createElement('div');
+    article_content_elm.setAttribute('id','content');
+    article_content_elm.innerHTML = article_content;
+    
+    
+
+           
+article_elm.appendChild(article_title_elm);
+article_elm.appendChild(  article_content_elm);
+document.getElementById('main').appendChild(article_elm);
+    
+
+
+}
+
+
+function addEventListenerList(list, event, fn) {
+    for (var i = 0, len = list.length; i < len; i++) {
+        list[i].addEventListener(event, fn, false);
+    }
+}
+
+
+
+var observer = new MutationObserver(function(mutations) {
+ 
+    addEventListenerList(document.getElementById('main').querySelectorAll('img'),'error',function(e){
+    
+        e.target.src='./images/no_img.jpg';
+    
+    })
+    
+});
+
+
+ 
+// configuration of the observer:
+var config = { attributes: true, childList: true, characterData: true };
+ 
+// pass in the target node, as well as the observer options
+observer.observe(document.getElementById('main'), config);

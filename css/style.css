@@ -2,7 +2,7 @@
             font-family: "Raleway";
             font-style: normal;
             font-weight: 400;
-            src: local("Raleway"), url("./css/Raleway.woff") format("woff");
+            src: local("Raleway"), url("Raleway.woff") format("woff");
         }
 
 
@@ -132,7 +132,7 @@ height:75px;*/
              position: absolute;
             bottom: 2px;
             left: 5px;
-            width:100%;
+            width:98%;
             overflow-x: hidden;
         }
  
@@ -157,10 +157,19 @@ height:75px;*/
 #category_head {
     width: 100%;
     background-color: #dedede;
-    background-image: url('../images/tech.jpg');
+    background-image: url('../images/texture.png');
     min-height: 150px;
     background-size: cover;
     background-repeat: no-repeat;
+}
+
+
+#main_start
+{
+
+
+    background-image: url('../images/texture.png');
+    color: white;
 }
 
 #category_title {
@@ -196,6 +205,9 @@ height:75px;*/
     float: left;
     font-size: 15px;
     margin-left: 10px;
+        white-space: nowrap;
+    width: 55%;
+    overflow: hidden;
 }
 
 .sub_list_head {
@@ -203,6 +215,7 @@ height:75px;*/
     padding-bottom:0px; 
     width: 100%;
     float: left;
+
 }
 
 .sub_text {
@@ -220,7 +233,7 @@ height:75px;*/
 .button {
     width:70px;
     transition: background-color 0.5s ease;
-    background-color: #29db29;
+    background-color: #7CCF74;
     color: white;
     height: 25px;
     border: none;
@@ -234,7 +247,7 @@ height:75px;*/
 .button:active
 {
 
- background-color: #27c227;
+ background-color: #29db29;
 }
 
 .sub_desc {
@@ -249,4 +262,54 @@ margin-top: 20px;
 height: 30px;
 line-height: 30px;
 margin-bottom: 2px;    
+}
+
+#article {
+    text-align: center;
+}
+
+#content_title {
+    margin-top: 10px;
+    padding: 0px 10px;
+    color: #4a4a4a;
+    font-weight: 600;
+}
+
+#content {
+    width: 90%;
+    text-align: justify;
+    padding: 15px;
+    line-height: 25px;
+}
+
+
+#content  img
+{
+
+    
+max-width: 100%;
+margin-bottom: 10px;
+display: block;
+margin-left: auto;
+margin-right: auto;    
+
+}
+
+
+#content  p
+{
+
+    
+margin-bottom: 15px;
+
+
+}
+
+#content  a
+{
+
+    
+text-decoration: none;
+color:#129f12;
+
 }

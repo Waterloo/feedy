@@ -1,8 +1,8 @@
 {
-  "version": "1",
+  "version": "0.0.12",
   "name": "Feedy",
   "launch_path": "/category_view.html#/cat/Tech",
-  "description": "A Light Weight Feed Reader for FirefoxOs",
+  "description": "A Light Weight Feed Reader for Firefox OS",
   "icons": {
     "16": "/images/logo16.png"
      },
@@ -17,7 +17,7 @@
   "permissions": {
  
     "alarms": {
-      "description": "Required to schedule alarms"
+      "description": "Required to sync the Feeds"
     }  
   },
     

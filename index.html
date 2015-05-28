@@ -8,13 +8,13 @@
 
 <link rel="stylesheet" href="css/style.css" type="text/css">
 
-
+<link rel="stylesheet" href="ads.css">
 
 
 </head>
 
 
-<body onload="populate_subscription();( function() {var bLazy = new Blazy();})">
+<body>
 
 
     <nav id="menu">
@@ -41,7 +41,8 @@
         </div>
 
         <div id="bottom">
-           <div class="nav_btn">Collection</div>
+          <div class="nav_btn" id="take_me_home">Home</div>
+           <div class="nav_btn">Collections</div>
            <div class="nav_btn">Add</div>
 <!--            <input type="text" placeholder="search feed or add url" id="search">-->
         </div>
@@ -91,17 +92,7 @@
 
 
     <script src="js/slideout.min.js"></script>
-    <script src="js/transparency.min.js"></script>
 
-    <script>
-        var slideout = new Slideout({
-            'panel': document.getElementById('main'),
-            'menu': document.getElementById('menu'),
-            'padding': 246,
-            'tolerance': 70,
-            'duration': 200
-        });
-    </script>
 
 
     <script src="./js/crypt.js"></script>

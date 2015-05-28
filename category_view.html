@@ -9,14 +9,41 @@
     <link rel="stylesheet" href="css/style.css" type="text/css">
 
 
-<script src="data.js"> </script>
-<script src="js/sha.js"></script>
-
 
 </head>
 
 <body onload="pop_follow_list()">
 
+    <nav id="menu">
+        <div id="lists">
+            <div id="clearfix"></div>
+            <div id="clearfix"></div>
+            <div class="menu_item"><img class="feed_favicon" src="./images/pebble.png" /> <span>Pebble Times</span>
+            </div>
+
+
+            <div class="menu_item"><img class="feed_favicon" src="./images/pebble.png" /> <span>The Next Web</span>
+            </div>
+
+
+
+            <div class="menu_item"><img class="feed_favicon" src="./images/pebble.png" /> <span>Engadget</span>
+            </div>
+
+
+
+            <div class="menu_item"><img class="feed_favicon" src="./images/pebble.png" /> <span>The Verge - All Post</span>
+            </div>
+
+        </div>
+
+        <div id="bottom">
+          <div class="nav_btn" id="take_me_home">Home</div>
+           <div class="nav_btn">Collections</div>
+           <div class="nav_btn">Add</div>
+<!--            <input type="text" placeholder="search feed or add url" id="search">-->
+        </div>
+    </nav>    
 
     <div id="main">
         <div id="feed_view" data-vis="show">
@@ -32,7 +59,7 @@
 
             <div id="category_head">
 
-                <span id="category_title">Technology</span>
+<!--                <span id="category_title">Technology</span>-->
 
 
 
@@ -55,11 +82,13 @@
 
     <div class="clearfix"></div>
 
+    <script src="./js/nanoajax.min.js"></script>
 
+   
+ <script src="js/slideout.min.js"></script>
 
-    <script src="js/sha.js">
-    </script>
-
+<script src="data.js"> </script>
+<script src="js/sha.js"></script>
 </body>
 
 </html>
