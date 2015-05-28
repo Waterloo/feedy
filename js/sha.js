@@ -12,9 +12,26 @@
 //          })();
 //document.addEventListener('load',router);
 
+'use strict';
 
-var global_feeds = JSON.parse(localStorage.feeds);
+setTimeout(function(){
+    
+var slideout = new Slideout({
+    'panel': document.getElementById('main'),
+    'menu': document.getElementById('menu'),
+    'padding': 246,
+    'tolerance': 70,
+    'duration': 200
+});
 
+populate_subscription();
+},50);
+
+var global_feeds = {};
+
+if (localStorage.feeds) {
+    global_feeds = JSON.parse(localStorage.feeds);
+}
 
 // Listineng for Hash Change
 window.addEventListener('hashchange', router);
@@ -40,7 +57,7 @@ function router() {
         break;
 
     case 'content':
-        display_article(route[2] ,route[3]);
+        display_article(route[2], route[3]);
         break;
 
     }
@@ -50,13 +67,66 @@ function router() {
 
 function populate_subscription() {
     var html = '';
-    var feeds = JSON.parse(localStorage.feeds);
+    var feed_name;
+    var feeds = {}
+    if (localStorage.feeds) {
+        feeds = JSON.parse(localStorage.feeds);
+    }
+     document.getElementById('lists').innerHTML = '';
     for (feed_name in feeds) {
         if (feeds[feed_name]) {
+
             html += '<div class="menu_item" onclick="populate_feed(this.textContent.trim())"><img class="feed_favicon" src="' + feeds[feed_name]['icon'] + '" /> <span>' + feed_name + '</span></div>';
+
+
+
+            var menu_item = document.createElement('div');
+            menu_item.setAttribute('class', 'menu_item');
+            menu_item.addEventListener('click', function (e) {
+                var elm = e.target;
+
+                if (elm.className != 'list') {
+                    elm = elm.parentElement;
+                }
+                populate_feed(elm.textContent.trim())
+
+            });
+            
+            
+        var sub_title  = document.createElement('span');
+            sub_title.textContent = feed_name;
+            
+        var feed_favicon = document.createElement('img');
+            feed_favicon.className = "feed_favicon";
+            
+            
+            
+            if(feeds[feed_name]['icon'].search('data')==-1) {
+            feed_favicon.crossOrigin = "Anonymous";    
+            feed_favicon.src ='http://geektips.in/feedy/?url='+ feeds[feed_name]['icon'];
+            feed_favicon.addEventListener('load', function(e){
+            
+            console.log(e);
+            console.log('img loaded');
+            cache_icon(e.target.parentElement.textContent,e.target);
+            
+            });
+            
+            
+            } else {
+            
+                feed_favicon.src = feeds[feed_name]['icon'];
+            
+            }
+            
+            menu_item.appendChild(feed_favicon);
+            menu_item.appendChild(sub_title);
+            
+             document.getElementById('lists').appendChild(menu_item);
+
         }
     }
-    document.getElementById('lists').innerHTML = html;
+//    document.getElementById('lists').innerHTML = html;
 }
 
 
@@ -65,7 +135,7 @@ function populate_subscription() {
 //This Function Returns the Source inside the first src attribut it finds even if it is not an Image , Needs Fixing
 function parse_img(html_str) {
 
-    reg = /\ssrc=(?:(?:'([^']*)')|(?:"([^"]*)")|([^\s]*))/;
+   var reg = /\ssrc=(?:(?:'([^']*)')|(?:"([^"]*)")|([^\s]*))/;
     return reg.exec(html_str);
 
 }
@@ -80,7 +150,7 @@ function fetech_feed(url, feed_name) {
     var feeds = {};
     //Api URL
 
-    fetch_url = 'http://localhost:8080/feedy/?url=' + encodeURIComponent(url);
+  var  fetch_url = 'http://localhost:8080/feedy/?url=' + encodeURIComponent(url);
 
     console.log(fetch_url);
 
@@ -97,6 +167,12 @@ function fetech_feed(url, feed_name) {
             //checking weather the subscription exists , if it is there parse it to Object
             if (localStorage.feeds) {
                 feeds = JSON.parse(localStorage.feeds);
+            }
+            else
+            {
+            
+                return 'Quiting';
+            
             }
 
             var tit = code.responseData.feed.title;
@@ -143,7 +219,7 @@ function populate_feed(feed_name) {
     var cur_time = new Date;
 
     //if feed is not fresh or dosn't fetech at all then fetech feed  else populate feed
-    if (((cur_time > data.updated_time) ) || data.updated_time == 0) {
+    if (((cur_time > data.updated_time)) || data.updated_time == 0) {
 
         var html = '<header id="top"><span id="top_title">Checking for new Articles...</span></header>';
         document.getElementById('main').innerHTML = html;
@@ -174,7 +250,7 @@ function force_populate_feed(feed_name) {
     var temp;
     var count = data.entries.length
     for (var i = 0; i < count; i++) {
-        elm = document.createElement('div');
+        var elm = document.createElement('div');
         elm.setAttribute('data-source', feed_name);
         elm.setAttribute('data-entry', i);
         elm.setAttribute('class', 'list');
@@ -249,7 +325,7 @@ function pop_follow_list(path) {
     document.getElementById('category_head').style.backgroundImage = 'url(\'' + collection[hash].img + '\')';
     document.getElementById('top_title').textContent = hash;
 
-
+var follow;
 
     for (follow in follow_feeds) {
         var sub_list = document.createElement('div');
@@ -305,7 +381,9 @@ function pop_follow_list(path) {
                 entries: [
         ],
                 updated_time: 0,
-                icon: collection[hash]['feeds'][feed_name].icon
+                icon: collection[hash]['feeds'][feed_name].icon,
+
+                icon_type: 'remote'
             };
 
             fetech_feed(feeds[feed_name].feed_url);
@@ -536,15 +614,7 @@ function shedule_sync(milli_sec) {
 //Initilazing of Canvas Menu
 
 
-var slideout = new Slideout({
-    'panel': document.getElementById('main'),
-    'menu': document.getElementById('menu'),
-    'padding': 246,
-    'tolerance': 70,
-    'duration': 200
-});
 
-populate_subscription();
 
 var home_btn = document.getElementById('take_me_home');
 home_btn.addEventListener('click', populate_home);
@@ -570,7 +640,7 @@ function propogate_content(e) {
     if (elm.className != 'list') {
         elm = elm.parentElement;
     }
-    
+
     location.hash = '';
     location.hash = '#/content/' + elm.dataset.source + '/' + elm.dataset.entry;
 }
@@ -581,30 +651,30 @@ function display_article(source, entry) {
     var article = global_feeds[source].entries[entry];
     var article_title = article.title;
     var article_content = article.content;
-    
-     var feed_name = (source);
+
+    var feed_name = (source);
     var html = '<header id="top"><span id="top_title">' + feed_name + '</span></header>';
     document.getElementById('main').innerHTML = html;
-    
-    var article_elm = document.createElement('div');
-    article_elm.setAttribute('id','article');
-    
-    var article_title_elm = document.createElement('h3');
-    article_title_elm.setAttribute('id','content_title');
-    article_title_elm.textContent = article_title;
-    
-    
-    var article_content_elm = document.createElement('div');
-    article_content_elm.setAttribute('id','content');
-    article_content_elm.innerHTML = article_content;
-    
-    
 
-           
-article_elm.appendChild(article_title_elm);
-article_elm.appendChild(  article_content_elm);
-document.getElementById('main').appendChild(article_elm);
-    
+    var article_elm = document.createElement('div');
+    article_elm.setAttribute('id', 'article');
+
+    var article_title_elm = document.createElement('h3');
+    article_title_elm.setAttribute('id', 'content_title');
+    article_title_elm.textContent = article_title;
+
+
+    var article_content_elm = document.createElement('div');
+    article_content_elm.setAttribute('id', 'content');
+    article_content_elm.innerHTML = article_content;
+
+
+
+
+    article_elm.appendChild(article_title_elm);
+    article_elm.appendChild(article_content_elm);
+    document.getElementById('main').appendChild(article_elm);
+
 
 
 }
@@ -618,20 +688,80 @@ function addEventListenerList(list, event, fn) {
 
 
 
-var observer = new MutationObserver(function(mutations) {
- 
-    addEventListenerList(document.getElementById('main').querySelectorAll('img'),'error',function(e){
-    
-        e.target.src='./images/no_img.jpg';
-    
+var observer = new MutationObserver(function (mutations) {
+
+    addEventListenerList(document.getElementById('main').querySelectorAll('img'), 'error', function (e) {
+
+        e.target.src = './images/no_img.jpg';
+
     })
-    
+
 });
 
 
- 
+
 // configuration of the observer:
-var config = { attributes: true, childList: true, characterData: true };
- 
+var config = {
+    attributes: true,
+    childList: true,
+    characterData: true
+};
+
 // pass in the target node, as well as the observer options
 observer.observe(document.getElementById('main'), config);
+
+
+
+
+// Labs
+
+
+function get64(source, width, height) {
+
+    var canvas = document.createElement('canvas');
+
+    canvas.height = height || 24;
+    canvas.width = width || 24;
+
+   var ctx = canvas.getContext('2d');
+
+    ctx.drawImage(source, 0, 0);
+
+    var imgData= canvas.toDataURL('image/png');
+    console.log(imgData);
+    canvas = null;
+    return imgData;
+}
+
+
+
+function cache_icon(feed_name, source) {
+
+    console.log('called me');
+    
+    var feeds = {};
+    
+    if(localStorage.feeds) {
+        
+    feeds =JSON.parse(localStorage.feeds);
+    }
+    
+    if (feeds[feed_name].icon_type != 'local') {
+
+
+        feeds[feed_name].icon = get64(source);
+        feeds[feed_name].icon_type = 'local';
+        localStorage.feeds = JSON.stringify(feeds);
+    }
+}
+
+
+//var imgs = document.createElement('img');
+//imgs.onload = function (e) {
+//
+//    console.log(get64(imgs));
+//
+//}
+//
+//imgs.crossOrgin = 'Anonymous';
+//imgs.src = './images/no_img.jpg';

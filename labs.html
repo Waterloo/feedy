@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    
+    <img id="sha" src="./images/books.jpg" alt="">
+    
+    <canvas id="ctx" width="24" height="24"></canvas>
+    
+    
+    
+    <script>
+        
+    var canvas = document.getElementById('ctx');    
+    ctx=canvas.getContext('2d');
+        
+    ctx.drawImage(sha,0,0);
+        
+    console.log((canvas.toDataURL( 'image/jpg')).length);
+    console.log((canvas.toDataURL( 'image/gif')).length);
+        
+    
+    
+    </script>
+</body>
+</html>
