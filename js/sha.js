@@ -100,8 +100,10 @@ function populate_subscription() {
             feed_favicon.className = "feed_favicon";
             
             
+            console.log(feed_name);
             
-            if(feeds[feed_name]['icon'].search('data')==-1) {
+            
+            if(feeds[feed_name]['icon'] && feeds[feed_name]['icon'].search('data')==-1) {
             feed_favicon.crossOrigin = "Anonymous";    
             feed_favicon.src ='http://geektips.in/feedy/?url='+ feeds[feed_name]['icon'];
             feed_favicon.addEventListener('load', function(e){
@@ -159,7 +161,7 @@ function fetech_feed(url, feed_name) {
         //if the ajax request was success    
         if (stat == 200) {
 
-            console.log(code);
+ 
             console.log(stat);
             //            console.log(JSON.parse(code));
             code = JSON.parse(code);
@@ -315,9 +317,10 @@ function pop_follow_list(path) {
     if (localStorage.feeds)
         subscribed_feeds = JSON.parse(localStorage.feeds);
     if (!path) {
-        path = ((window.location.hash.replace('#', '')).split('/'))[2];
+        path ='Tech';
     }
     var hash = path;
+   
     var follow_feeds = collection[hash].feeds;
 
 
@@ -327,6 +330,7 @@ function pop_follow_list(path) {
 
 var follow;
 
+        document.getElementById('sub_lists').innerHTML = '';
     for (follow in follow_feeds) {
         var sub_list = document.createElement('div');
         sub_list.setAttribute('class', 'sub_list');
@@ -357,8 +361,10 @@ var follow;
         sub_list_head.appendChild(button);
         sub_list.appendChild(sub_list_head);
         sub_list.appendChild(sub_desc);
+        
         document.getElementById('sub_lists').appendChild(sub_list);
     }
+    
     var buttons = document.getElementsByClassName('button');
     var btn_len = buttons.length
     for (var i = 0; i < btn_len; i++) {
@@ -720,8 +726,8 @@ function get64(source, width, height) {
 
     var canvas = document.createElement('canvas');
 
-    canvas.height = height || 24;
-    canvas.width = width || 24;
+    canvas.height = height || 32;
+    canvas.width = width || 32;
 
    var ctx = canvas.getContext('2d');
 

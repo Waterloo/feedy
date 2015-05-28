@@ -167,9 +167,16 @@ height:75px;*/
 #main_start
 {
 
+/*
 
     background-image: url('../images/texture.png');
     color: white;
+    
+*/
+    color: #FFF;
+text-align: center;
+background-color: #7CCF74;
+background-image: linear-gradient(120deg,  #2587F6,#7CCF74);
 }
 
 #category_title {
@@ -312,4 +319,11 @@ margin-bottom: 15px;
 text-decoration: none;
 color:#129f12;
 
+}
+
+#content iframe {
+    
+max-width: 100% !important;
+height: 65% !important;
+    
 }
