@@ -35,7 +35,8 @@ Feedy is a simple feed reader for Firefox OS.
 
 
 ####ToDo
-* Implement OPML import and export
+* Mark Items as read (Importent)
+* Implement OPML import and export (Importent)
 * Tiny Tiny RSS Implementation
 * OwnCloud Integration
 
