@@ -12,7 +12,13 @@ Feedy is a simple feed reader for Firefox OS.
 <img src="https://c2.staticflickr.com/6/5324/18086453282_b2231d7463.jpg" width="180px" height="280px"> 
 </td><td>
 <img src="https://c4.staticflickr.com/8/7783/18001725338_a65e058320.jpg" width="180px" height="280px"> 
-</td></tr></table>
+</td>
+
+<td>
+<img src="https://c4.staticflickr.com/8/7795/18072762829_b53432e38c.jpg" width="180px" height="280px"> 
+</td>
+
+</tr></table>
 </center>
 
 </p>
