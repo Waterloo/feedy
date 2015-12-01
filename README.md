@@ -1,4 +1,4 @@
-# feedy (Alpha)
+# Feedy (Alpha)
 
 
 Feedy is a simple feed reader for Firefox OS. 
